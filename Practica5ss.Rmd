@@ -1,0 +1,217 @@
+---
+title: "Práctica V: Transformada Discreta de Fourier"
+subtitle: "Señales y Sistemas, Grado en Ciencia de Datos - UV"
+author: "Sandra Paniagua Sánchez y Gema Bravo Aguilera"
+date:  "`r Sys.Date()`"  # Fecha del día actual
+header-includes: |
+      \usepackage{fancyhdr}
+      \pagestyle{fancy}
+      \fancyhead[RO,LE]{\includegraphics[width=186px]{universidad.png}}
+      \fancyhead[LO,LE]{ \textbf {Grado en Ciencia de Datos} \\\textbf {Prácticas de Señales y Sistemas }}
+      
+output:
+  # html_document:
+  #   echo: yes
+  #   number_sections: no
+  #   theme: lumen
+  #   toc: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    number_sections: no
+    
+always_allow_html: true
+---
+
+```{r setup, cache=F, echo=F, message=F, warning=F, tidy=F}
+# CONFIGURACIÓN GENERAL
+library(knitr)
+options(width=100)
+# Opciones generales chunks
+opts_chunk$set(echo=TRUE, message=F, error=F, warning=F,
+               comment=NA, fig.align='center', dpi=100, tidy=F,
+               cache.path='./cache/', fig.path='./figure/')
+
+# options(xtable.type='html')
+knit_hooks$set(inline=function(x) {
+  if(is.numeric(x)) {
+    round(x, getOption('digits'))
+  } else {
+    paste(as.character(x), collapse=', ')
+  }
+})
+# knit_hooks$set(plot=knitr:::hook_plot_html)
+```
+
+```{r, include=F}
+# Especificamos las librerías necesarias en esta lista
+packages=c("tidyverse", "knitr", "ggplot2", "datasets", "RColorBrewer", "dplyr", "lubridate", "kableExtra", "ramify", "signal", "tuneR", "sound", "seewave", "signal", "R.matlab")
+# use this function to check if each package is on the local machine
+# if a package is installed, it will be loaded
+# if any are not, the missing package(s) will be installed and loaded
+package.check <- lapply(packages, FUN=function(x) {
+  if (!require(x, character.only=TRUE)) {
+    install.packages(x, dependencies=TRUE,repos='http://cran.rediris.es')
+    library(x, character.only=TRUE)
+  }
+})
+# verify they are loaded
+search()
+```
+
+\newpage
+
+# Práctica V: Transformada Discreta de Fourier
+
+# 1. Objetivos
+
+El objetivo de esta práctica es estudiar las propiedades de la Transformada Discreta de Fourier y su inversa, así como clarificar conceptos como _Resolución Espectral, Zero Padding, Enventanado, etc._ Finalmente se aplicará el _algoritmo de Goertzel_ para la detección de tonos en un sistema de alarmas.
+
+
+Las instrucciones de R, de su librería `signal`, para determinar la DFT y su inversa son, respectivamente, `fft` e `ifft`.
+
+
+# 2. Prelaboratorio:
+
+Haz una señal de 50 Hz y comprueba que tiene un pico en 50 Hz. Fijate en el código de la siguiente
+sección, en concreto en la instrucción "fft".
+
+
+# 3. Efecto del _Zero Padding_
+
+Sea $L$ el número de muestras de la secuencia $x(n)$ de la que queremos calcular su DFT y $N$ el número de puntos con los que calculamos la DFT. Sabemos que si $N = L$ la secuencia $x(n)$ puede recuperarse sin ambigüedad a partir de las muestras del espectro; sin embargo, la representación del espectro no es _clara_ desde un punto de vista gráfico.
+
+
+Dada la secuencia $x(n) = \{ 1, 1, 1, 1, 1 \}$ con $L = 5$. Representar el espectro para DFT's de orden $N=5,10,20,50,100$ y $1000$. Observar las gráficas e indicar cuál es el efecto del _Zero Padding_.
+
+En este apartado analizaremos la _Resolución_ de la DFT.
+
+Es importante distinguir la _resolución física_ de la _resolución computacional_. Si se tiene una señal de longitud
+L y se está trabajando con una frecuencia de muestreo $F_m$ la mínima frecuencia que se podría discernir será aquella cuyo valor sea, precisamente, $\frac{Fm}{L}$. Sin embargo, en una DFT la resolución computacional es igual a $\frac{F_m}{N}$ ; $\triangle f | _{FISICA} = \frac{Fm}{L}$ , $\triangle f | _{COMPUTACIONAL} = \frac{Fm}{N}$. Hay que ser conscientes que la limitación en la distinción de frecuencias presentes en la señal original viene determinada por la resolución física.
+
+
+Utiliza el siguiente código para ver la diferencia entre ellas mediante un sencillo ejemplo.
+
+```{r, fig.show = 'hide'}
+F1= 90;
+F2= 100;
+F3= 240;
+F4= 360;
+Fm=1000;
+tt = 25; # Duracion del muestreo en ms
+N = 25; # Longitud de la DFT aumentada (mediante zero padding)
+t = (Fm * tt) * 1e-3;
+x = cos(2*pi*(F1/Fm)*(1:t-1)) + cos(2*pi*(F2/Fm)*(1:t-1))+
++ cos(2*pi*(F3/Fm)*(1:t-1)) + cos(2*pi*(F4/Fm)*(1:t-1))
+y = fft(x)
+# Generamos el eje X para interpretar frecuencias
+t1 = (1:t-1) * Fm / t;
+plot(t1,abs(y), col = "red");
+# Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
+# aumentada anyadiendo ceros.
+x0= numeric(N-length(x))
+xp= c(x, x0)
+
+yy = fft(xp);
+t2 = (1:N-1) * Fm / N;
+plot(t2,abs(yy), col = "green")
+# Se deja al alumno el anyadir las leyendas
+```
+
+Se ha considerado una suma de 4 sinusoides de frecuencias $F_1 = 90Hz, F_2 = 100Hz, F_3 = 240Hz, F_4 = 360Hz$ muestreadas con una frecuencia de muestreo de $F_m = 1kHz$.
+
+- Considera que la señal se muestrea durante 25 ms. y que el orden de la DFT coincide con el número de muestras de la señal. ¿Son discernibles todas las componentes sinusoidales de la señal?
+
+- Mantén el número de muestras de la señal y aumenta el orden de la DFT, ¿podemos discernir las
+sinusoides de 90 y 100 Hz?
+
+
+- Ahora aumentaremos el tiempo de muestreo a 100 ms. Elige $N = L$, ¿qué ocurre ahora?
+
+- Repite el apartado anterior aumentando el orden de la DFT, ¿qué ocurre?
+
+
+Una forma alternativa de interpretar qué está ocurriendo cuando $L < N$ es considerar que la señal está siendo enventanada con una ventana rectangular
+
+$wREC(x) = 1$ si $0 \leq n \leq L - 1$
+
+$0n > L$
+
+
+El proceso de enventanado genera una señal $x_w(n) = x(n) \cdot w_R(n)$, siendo $w_R(n)$ la ventana rectangular. El producto en el dominio temporal equivale a la convolución en el dominio frecuencial. La ventana rectangular tiene un espectro con un lóbulo principal de anchura $\frac{2 \pi }{L}$, siendo $L$ la longitud de la ventana. Este lóbulo principal va a tener una gran influencia en el espectro resultante (_nota: La anchura de la ventana se suele definir como la mitad de la anchura del lóbulo principal de la misma_, $\frac{4\pi}{L}$ ).
+
+Hemos visto los problemas que nos encontramos cuando la resolución física no es lo suficientemente pequeña para poder detectar una sinusoide. Sin embargo podemos tener otro problema: ¿qué ocurre cuando esta resolución física es suficiente pero la frecuencia de las componentes no es un múltiplo de la resolución computacional de la DFT $\triangle f | _{COMPUTACIONAL} = \frac{Fm}{N}$?
+
+- Representa gráficamente una sinusoide de frecuencia 10 Hz muestreada a 1000 Hz y duración de 250 ms, fíjate en los puntos iniciales y finales de dicha onda, o bien observa que en este caso la resolución es de _4 Hz_, por lo que en el espectro tendremos componentes en _0 Hz, 4 Hz, 8 Hz, 12 Hz_, $\dots$ pero no en _10 Hz_.
+
+- Determina ahora la DFT de esa señal con $N=L$, ¿qué ocurre?
+
+El efecto que aparece se conoce como _spectral leakage_ (goteo espectral) y es debido a que las componentes sinusoidales no se corresponden con múltiplos de la frecuencia fundamental de la DFT.
+
+
+Otra forma de verlo es trasladarse al dominio temporal. La DFT es la representación de la señal $x(n)$ que por construcción tiene periodo N. Como hay una diferencia entre el punto inicial y final de dicha señal se produce una _discontinuidad_ en esa señal periódica que la DFT intenta modelar. Esta discontinuidad se puede interpretar de nuevo como el producto de la secuencia con una ventana rectangular, y el _goteo espectral_ como consecuencia de los lóbulos secundarios del espectro de la ventana. Para minimizar este problema se plantea el uso de diferentes ventanas.
+
+# 4 Efecto del _enventanado_ en la DFT
+
+- Para poner de manifiesto el efecto del enventanado analiza el siguiente código y ejecútalo.
+
+```{r}
+library(signal)
+library(plotly)
+
+rm(list=ls())
+N1 = 10
+
+n1 = c(1:N1-1)
+dim(n1)= c(1,N1)
+F = 2*pi*c(2000, 2500, 3000)/10000;
+dim(F)= c(1,3)
+f1 = colSums(cos(t(F) %*% n1));
+length(f1)=N1
+N2 = 20; # Numero de muestras de la senyal
+n2 = n1 = c(0:N2);
+f2 = colSums(cos(t(F) %*%n2));
+length(f2)=N2
+h_f1 = t(f1) * hamming(N1);
+h_f2 =t(f2) * hamming(N2);
+Nfft = 256;
+f10= numeric(Nfft-length(f1))
+f1p= c(f1, f10)
+ftf1 = fft(f1p,Nfft);
+f20= numeric(Nfft-length(f2))
+f2p= c(f2, f20)
+ftf2 = fft(f2p,Nfft);
+h_f10= numeric(Nfft-length(h_f1))
+h_f1p= c(h_f1, h_f10)
+ftf3 = fft(h_f1p,Nfft);
+h_f20= numeric(Nfft-length(h_f2))
+h_f2p= c(h_f2, h_f20)
+ftf4 = fft(h_f2p,Nfft);
+w = c(1:Nfft-1)*(2*pi/Nfft)
+p1 = plot_ly(x=w/pi,y=abs(ftf1))
+p2 = plot_ly(x=w/pi,y=abs(ftf2))
+p3 = plot_ly(x=w/pi,y=abs(ftf3))
+p4 = plot_ly(x=w/pi,y=abs(ftf4))
+subplot(p1, p2, p3,p4, nrows=2)
+```
+
+- Modifica para que `N1 = 40, N2 = 100`, manteniendo `Nfft = 256`, ¿qué se obtiene ahora? ¿Qué ocurre con todas las componentes "ficticias" asociadas al goteo espectral?
+
+
+- Repite el apartado anterior variando el tipo de ventana (`hamming, hanning, blackman`, etc). ¿Qué cambios observas?
+
+- El enventanado reduce el _goteo espectral_ pero ¿no se paga nada a cambio? ¿Qué inconvenientes presenta el enventanado?
+
+En este apartado analizaremos algunas _aplicaciones_ de la DFT. El gran uso de la DFT está íntimamente relacionado con la existencia de algoritmos rápidos para su cálculo ($FFT$). La DFT tiene una carga computacional del orden de $N^2$ mientras que la $FFT$ tiene una carga de $N \cdot log_2(N)$.
+
+
+- Representa, en una misma gráfica, la carga computacional en función de _n_ para ambos algoritmos variando _N_ entre 0 y 2048. ¿Es significativa la mejora?
+
+- Una aplicación de la DFT es el cálculo de la convolución de dos secuencias, dada la equivalencia entre la convolución circular y el producto de _DFT's_. Realiza la convolución de las secuencias $X_1 = [1, 2, 3]$ y $X_2 = [-1, 1]$ usando la instrucción `conv`. Realiza el calculo usando la _DFT_ de _N = 3_ puntos. ¿Obtienes los mismos resultados? Repite el procedimiento con _DFT_ de _N = 4_ y _DFT_ de _N = 5_ ¿Coinciden los resultados con los obtenidos con la instrucción `conv`? Explica qué procedimiento debes seguir para usar la DFT para calcular la convolución de dos secuencias y que los resultados coincidan con los de la convolución lineal.
+
+- (Ejercicio Opcional) En ocasiones no necesitamos calcular el espectro de una señal en todas las muestras de la _DFT_ sino que podemos estar interesados en unas pocas frecuencias. En estos casos existen algoritmos mas eficientes que la _FFT_ para realizar este cálculo; es el caso del algoritmo de Goertzel y un ejemplo típico de uso es la detección de tonos DTMF de la línea telefónica. En este apartado debes utilizar el algoritmo de Goertzel para resolver el siguiente problema _Nota: Debes programar el algoritmo de Goertzel, sabiendo que la salida de un filtro digital se puede calcular, con R, con la instrucción `y = filter(B,A,x)`, siendo `B`, y `A` los vectores de coeficientes del numerador y denominador de la función de transferencia del sistema, respectivamente._
+
+
+_Se desea construir un sistema detector de alarmas de un edificio. Tenemos tres alarmas: incendio, robo y detector de llamada telefónica. Cada una de ellas se activa por una frecuencia característica de 150, 175 y 200 Hz respectivamente (la frecuencia de muestreo del sistema es de 500 Hz). Escribe un programa en R que implemente este detector usando el algoritmo de Goertzel. Los parámetros del sistema serán el término k del armónico a detectar y el orden de la DFT necesario para discernir esas frecuencias. La salida del programa debe ser un vector de 3 componentes indicando cada una de ellas si se activa la alarma (salida=1) o no se activa (salida=0)._
+
+Verifica el funcionamiento del sistema utilizando señales que contenga combinaciones de sinusoides de estas frecuencias, ninguna de ellas, etc.
