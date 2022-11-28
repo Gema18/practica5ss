@@ -227,6 +227,8 @@ Hemos aprendido que:
 Parar mejorar la resolucion computacional, aumentaremos la N con 0.
 Para mejorar la resolucion fisica, aumentaremos el tiempo de muestreo para que la señal de entrada sea mayor.
 
+La RF=1000/25 = 40Hz
+La RC=1000/25 = 40Hz
 
 - Mantén el número de muestras de la señal y aumenta el orden de la DFT, ¿podemos discernir las
 sinusoides de 90 y 100 Hz?
@@ -247,7 +249,7 @@ x = cos(2*pi*(F1/Fm)*(1:t-1)) + cos(2*pi*(F2/Fm)*(1:t-1))+
 y = fft(x)
 # Generamos el eje X para interpretar frecuencias
 t1 = (1:t-1) * Fm / t;
-plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
+plot(t1,abs(y), col = "black", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
 
 # Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
 # aumentada anyadiendo ceros.
@@ -255,15 +257,16 @@ x0= numeric(N-length(x))
 xp= c(x, x0)
 yy = fft(xp);
 t2 = (1:N-1) * Fm / N;
-plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
+plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
 
 
 
 ```
 CONCLUSIÓN:
+Lo que estamos haciendo es aumentar la N con 0 padding y no aumentar tt, aumenta la resolución computacional.
 
-La RF=40Hz
-La RC=1
+La RF=1000/25 = 40Hz
+La RC=1000/1000 = 1Hz
 Como la física sigue siendo alta, no podremos discernir las frecuencias entre los picos representados.
 
 
@@ -283,9 +286,9 @@ x = cos(2*pi*(F1/Fm)*(1:t-1)) + cos(2*pi*(F2/Fm)*(1:t-1))+
 y = fft(x)
 # Generamos el eje X para interpretar frecuencias
 t1 = (1:t-1) * Fm / t;
-plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
+plot(t1,abs(y), col = "black", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
 
-plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física", xlim=c(0, 30))
+#plot(t1,abs(y), col = "black", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física", xlim=c(0, 30))
 
 
 # Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
@@ -294,12 +297,12 @@ x0= numeric(N-length(x))
 xp= c(x, x0)
 yy = fft(xp);
 t2 = (1:N-1) * Fm / N;
-plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
+plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
 
-plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
+#plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
 ```
-La RF = 10
-La RC = 10
+La RF=1000/100 = 10Hz
+La RC=1000/100 = 10Hz
 En este caso, lo que ocurre es que la resolución física es aceptable, pero la computacional no, por lo tanto ...
 
 - Repite el apartado anterior aumentando el orden de la DFT, ¿qué ocurre?
@@ -319,7 +322,7 @@ y = fft(x)
 # Generamos el eje X para interpretar frecuencias
 t1 = (1:t-1) * Fm / t;
 plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
-plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física", xlim=c(0,30))
+#plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física", xlim=c(0,30))
 
 # Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
 # aumentada anyadiendo ceros.
@@ -329,7 +332,7 @@ yy = fft(xp);
 t2 = (1:N-1) * Fm / N;
 plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
 
-plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim=c(0,30))
+#plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim=c(0,30))
 
 ```
 
