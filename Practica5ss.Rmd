@@ -45,7 +45,7 @@ knit_hooks$set(inline=function(x) {
 
 ```{r, include=F}
 # Especificamos las librerías necesarias en esta lista
-packages=c("tidyverse", "knitr", "ggplot2", "datasets", "RColorBrewer", "dplyr", "lubridate", "kableExtra", "ramify", "signal", "tuneR", "sound", "seewave", "signal", "R.matlab")
+packages=c("tidyverse", "knitr", "ggplot2", "datasets", "RColorBrewer", "dplyr", "lubridate", "kableExtra", "ramify", "signal", "tuneR", "sound", "seewave", "signal", "R.matlab", "plotly")
 # use this function to check if each package is on the local machine
 # if a package is installed, it will be loaded
 # if any are not, the missing package(s) will be installed and loaded
@@ -73,8 +73,29 @@ Las instrucciones de R, de su librería `signal`, para determinar la DFT y su in
 
 # 2. Prelaboratorio:
 
-Haz una señal de 50 Hz y comprueba que tiene un pico en 50 Hz. Fijate en el código de la siguiente
-sección, en concreto en la instrucción "fft".
+Haz una señal de 50 Hz y comprueba que tiene un pico en 50 Hz. Fijate en el código de la siguiente sección, en concreto en la instrucción "fft".
+
+```{r}
+F1= 50;
+Fm=100;
+tt = 25; # Duracion del muestreo en ms
+N = 25; # Longitud de la DFT aumentada (mediante zero padding)
+t = (Fm * tt) * 1e-3;
+x = cos(2*pi*(F1/Fm)*(1:t-1)) 
+y = fft(x)
+# Generamos el eje X para interpretar frecuencias
+t1 = (1:t-1) * Fm / t;
+plot(t1,abs(y), col = "red");
+# Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
+# aumentada anyadiendo ceros.
+x0= numeric(N-length(x))
+xp= c(x, x0)
+
+yy = fft(xp);
+t2 = (1:N-1) * Fm / N;
+plot(t2,abs(yy), col = "green") + abline(v = 50, col = "blue")
+# Se deja al alumno el anyadir las leyendas
+```
 
 
 # 3. Efecto del _Zero Padding_
