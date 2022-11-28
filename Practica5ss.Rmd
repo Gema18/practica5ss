@@ -653,15 +653,13 @@ Podemos observar que la función logarítmica tiene un crecimiento suave, es men
 ```{r}
 library(signal)
 #Definimos las dos señales
-x1=c(1,2,3,0,0)
-x2=c(-1,1,0,0,0)
+x1=c(1,2,3,rep(0,2))
+x2=c(-1,1,rep(0,3))
 #En primer lugar hacemos la convolución
 y1 <- conv(x1,x2)
 #Y en segundo lugar lo hacemos por partes.
 y2 <- Re(ifft(fft(x1)*fft(x2)))
-
 y1
-
 y2
 ```
 
