@@ -259,18 +259,17 @@ plot(t1,abs(y), col = "black", xlab="Frecuencias", ylab="Amplitud", main="Resolu
 x0= numeric(N-length(x))
 xp= c(x, x0)
 yy = fft(xp);
-t2 = (1:N-1) * Fm / N;
-plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
+t2 = (1:N-1) * Fm / N
 
 plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
 
 ```
 CONCLUSIÓN:
-Lo que estamos haciendo es aumentar la N con 0 padding y no aumentar tt, aumenta la resolución computacional.
+Lo que estamos haciendo es aumentar la N con 0 padding y no aumentar tt = L, solo aumenta la resolución computacional.Y ahora matematicamente:
 
 La RF=1000/25 = 40Hz
 La RC=1000/1000 = 1Hz
-Como la física sigue siendo alta, no podremos discernir las frecuencias entre los picos representados.
+Como la física sigue siendo alta, no podremos discernir las frecuencias entre los picos representados, en este caso 90 y 100 porque su diferencia es de 10, que sigue siendo menor de 40Hz de la RF.
 
 
 - Ahora aumentaremos el tiempo de muestreo a 100 ms. Elige $N = L$, ¿qué ocurre ahora?
@@ -291,8 +290,6 @@ y = fft(x)
 t1 = (1:t-1) * Fm / t;
 plot(t1,abs(y), col = "black", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
 
-#plot(t1,abs(y), col = "black", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física", xlim=c(0, 30))
-
 
 # Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
 # aumentada anyadiendo ceros.
@@ -302,11 +299,12 @@ yy = fft(xp);
 t2 = (1:N-1) * Fm / N;
 plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
 
-#plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
 ```
+La comprobacion matematica es:
+
 La RF=1000/100 = 10Hz
 La RC=1000/100 = 10Hz
-En este caso, lo que ocurre es que la resolución física es aceptable, pero la computacional no, por lo tanto ...
+En este caso, la RF es buena puesto que podemos discernir todas las frecuencias puesto que la diferencia de Hz es igual que la RF. Respecto a la RC seria mejor aumentar la N con zero padding para poder ver con mas definicion de puntos.
 
 - Repite el apartado anterior aumentando el orden de la DFT, ¿qué ocurre?
 
@@ -324,8 +322,7 @@ x = cos(2*pi*(F1/Fm)*(1:t-1)) + cos(2*pi*(F2/Fm)*(1:t-1))+
 y = fft(x)
 # Generamos el eje X para interpretar frecuencias
 t1 = (1:t-1) * Fm / t;
-plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
-#plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física", xlim=c(0,30))
+plot(t1,abs(y), col = "black", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
 
 # Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
 # aumentada anyadiendo ceros.
@@ -333,15 +330,16 @@ x0= numeric(N-length(x))
 xp= c(x, x0)
 yy = fft(xp);
 t2 = (1:N-1) * Fm / N;
-plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
-
-#plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim=c(0,30))
+plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
 
 ```
 
-La RF = 10
-La RC = 1
-La RC y la RF están los suficientemente equilibradas como para poder distinguir todas las frecuencias y 
+Ahora matematicamente: 
+
+La RF=1000/100 = 10Hz
+La RC=1000/1000 = 1Hz
+
+La RC y la RF están los suficientemente equilibradas como para poder distinguir todas las frecuencias.
 
 
 Una forma alternativa de interpretar qué está ocurriendo cuando $L < N$ es considerar que la señal está siendo enventanada con una ventana rectangular
