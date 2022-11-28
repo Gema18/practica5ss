@@ -231,10 +231,111 @@ Para mejorar la resolucion fisica, aumentaremos el tiempo de muestreo para que l
 - Mantén el número de muestras de la señal y aumenta el orden de la DFT, ¿podemos discernir las
 sinusoides de 90 y 100 Hz?
 
+Cuanto vale la resolución fisica y la resolución computacional para poder discernir
+
+```{r}
+F1= 90;
+F2= 100;
+F3= 240;
+F4= 360;
+Fm=1000; #Frecuencia de muestreo
+tt = 25; # Duracion del muestreo en ms (resolución fisica)
+N = 1000; # Longitud de la DFT aumentada (mediante zero padding)
+t = (Fm * tt) * 1e-3;
+x = cos(2*pi*(F1/Fm)*(1:t-1)) + cos(2*pi*(F2/Fm)*(1:t-1))+
++ cos(2*pi*(F3/Fm)*(1:t-1)) + cos(2*pi*(F4/Fm)*(1:t-1))
+y = fft(x)
+# Generamos el eje X para interpretar frecuencias
+t1 = (1:t-1) * Fm / t;
+plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
+
+# Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
+# aumentada anyadiendo ceros.
+x0= numeric(N-length(x))
+xp= c(x, x0)
+yy = fft(xp);
+t2 = (1:N-1) * Fm / N;
+plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
+
+
+
+```
+CONCLUSIÓN:
+
+La RF=40Hz
+La RC=1
+Como la física sigue siendo alta, no podremos discernir las frecuencias entre los picos representados.
+
 
 - Ahora aumentaremos el tiempo de muestreo a 100 ms. Elige $N = L$, ¿qué ocurre ahora?
 
+```{r}
+F1= 90;
+F2= 100;
+F3= 240;
+F4= 360;
+Fm=1000; #Frecuencia de muestreo
+tt = 100; # Duracion del muestreo en ms
+N = 100; # Longitud de la DFT aumentada (mediante zero padding)
+t = (Fm * tt) * 1e-3;
+x = cos(2*pi*(F1/Fm)*(1:t-1)) + cos(2*pi*(F2/Fm)*(1:t-1))+
++ cos(2*pi*(F3/Fm)*(1:t-1)) + cos(2*pi*(F4/Fm)*(1:t-1))
+y = fft(x)
+# Generamos el eje X para interpretar frecuencias
+t1 = (1:t-1) * Fm / t;
+plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
+
+plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física", xlim=c(0, 30))
+
+
+# Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
+# aumentada anyadiendo ceros.
+x0= numeric(N-length(x))
+xp= c(x, x0)
+yy = fft(xp);
+t2 = (1:N-1) * Fm / N;
+plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
+
+plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
+```
+La RF = 10
+La RC = 10
+En este caso, lo que ocurre es que la resolución física es aceptable, pero la computacional no, por lo tanto ...
+
 - Repite el apartado anterior aumentando el orden de la DFT, ¿qué ocurre?
+
+```{r}
+F1= 90;
+F2= 100;
+F3= 240;
+F4= 360;
+Fm=1000; #Frecuencia de muestreo
+tt = 100; # Duracion del muestreo en ms
+N = 1000; # Longitud de la DFT aumentada (mediante zero padding)
+t = (Fm * tt) * 1e-3;
+x = cos(2*pi*(F1/Fm)*(1:t-1)) + cos(2*pi*(F2/Fm)*(1:t-1))+
++ cos(2*pi*(F3/Fm)*(1:t-1)) + cos(2*pi*(F4/Fm)*(1:t-1))
+y = fft(x)
+# Generamos el eje X para interpretar frecuencias
+t1 = (1:t-1) * Fm / t;
+plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
+plot(t1,abs(y), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física", xlim=c(0,30))
+
+# Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
+# aumentada anyadiendo ceros.
+x0= numeric(N-length(x))
+xp= c(x, x0)
+yy = fft(xp);
+t2 = (1:N-1) * Fm / N;
+plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
+
+plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim=c(0,30))
+
+```
+
+La RF = 10
+La RC = 1
+La RC y la RF están los suficientemente equilibradas como para poder distinguir todas las frecuencias y 
 
 
 Una forma alternativa de interpretar qué está ocurriendo cuando $L < N$ es considerar que la señal está siendo enventanada con una ventana rectangular
@@ -249,6 +350,45 @@ El proceso de enventanado genera una señal $x_w(n) = x(n) \cdot w_R(n)$, siendo
 Hemos visto los problemas que nos encontramos cuando la resolución física no es lo suficientemente pequeña para poder detectar una sinusoide. Sin embargo podemos tener otro problema: ¿qué ocurre cuando esta resolución física es suficiente pero la frecuencia de las componentes no es un múltiplo de la resolución computacional de la DFT $\triangle f | _{COMPUTACIONAL} = \frac{Fm}{N}$?
 
 - Representa gráficamente una sinusoide de frecuencia 10 Hz muestreada a 1000 Hz y duración de 250 ms, fíjate en los puntos iniciales y finales de dicha onda, o bien observa que en este caso la resolución es de _4 Hz_, por lo que en el espectro tendremos componentes en _0 Hz, 4 Hz, 8 Hz, 12 Hz_, $\dots$ pero no en _10 Hz_.
+
+```{r}
+#Creamos la sinusoide
+F1= 10;
+Fm=1000; #Frecuencia de muestreo
+tt = 250; # Duracion del muestreo en ms
+N = 1000; # Longitud de la DFT aumentada (mediante zero padding)
+t = (Fm * tt) * 1e-3;
+x = cos(2*pi*(F1/Fm)*(1:t-1))
+plot(x)
+
+#Creamos la sinusoide
+F1= 10;
+Fm=1000; #Frecuencia de muestreo
+tt = 250; # Duracion del muestreo en ms
+N = 250; # Longitud de la DFT aumentada (mediante zero padding)
+t = (Fm * tt) * 1e-3;
+x = cos(2*pi*(F1/Fm)*(1:t-1))
+plot(x)
+
+
+xy = fft(x)
+# Generamos el eje X para interpretar frecuencias
+t1 = (1:t-1) * Fm / t;
+plot(t1,abs(xy), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
+
+plot(t1,abs(xy), col = "red", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física", xlim=c(0, 30))
+
+# Para generar el Zero Padding se adapta la base temporal a la longitud de la DFT
+# aumentada anyadiendo ceros.
+x0= numeric(N-length(x))
+xp= c(x, x0)
+yy = fft(xp);
+t2 = (1:N-1) * Fm / N;
+plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
+
+plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
+```
+
 
 - Determina ahora la DFT de esa señal con $N=L$, ¿qué ocurre?
 
