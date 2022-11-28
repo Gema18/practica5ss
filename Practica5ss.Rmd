@@ -172,6 +172,64 @@ El efecto que aparece se conoce como _spectral leakage_ (goteo espectral) y es d
 
 Otra forma de verlo es trasladarse al dominio temporal. La DFT es la representación de la señal $x(n)$ que por construcción tiene periodo N. Como hay una diferencia entre el punto inicial y final de dicha señal se produce una _discontinuidad_ en esa señal periódica que la DFT intenta modelar. Esta discontinuidad se puede interpretar de nuevo como el producto de la secuencia con una ventana rectangular, y el _goteo espectral_ como consecuencia de los lóbulos secundarios del espectro de la ventana. Para minimizar este problema se plantea el uso de diferentes ventanas.
 
+
+
+
+
+
+
+Dada la secuencia $x(n) = \{ 1, 1, 1, 1, 1 \}$ con $L = 5$. Representar el espectro para DFT's de orden $N=5,10,20,50,100$ y $1000$. Observar las gráficas e indicar cuál es el efecto del _Zero Padding_.
+
+```{r}
+#N=5
+x<-c(1,1,1,1,1)
+y<-fft(x)
+#Respuesta en frecuencia de la señal
+plot(abs(y))
+
+
+#N=10
+x<-c(1,1,1,1,1,0,0,0,0,0)
+y<-fft(x)
+#Respuesta en frecuencia de la señal
+plot(abs(y))
+
+
+#N=20
+x<-c(rep.int(1,5),rep.int(0,14))
+y<-fft(x)
+#Respuesta en frecuencia de la señal
+plot(abs(y))
+
+
+#N=50
+x<-c(rep.int(1,5),rep.int(0,45))
+y<-fft(x)
+#Respuesta en frecuencia de la señal
+plot(abs(y))
+
+
+#N=100
+x<-c(rep.int(1,5),rep.int(0,95))
+y<-fft(x)
+#Respuesta en frecuencia de la señal
+plot(abs(y))
+
+
+#N=1000
+x<-c(rep.int(1,5),rep.int(0,995))
+y<-fft(x)
+#Respuesta en frecuencia de la señal
+plot(abs(y))
+```
+CONCLUSION:
+
+Añadir ceros aumenta el número de puntos de la representación gráfica. 
+Es decir, aumentamos la resolución.
+
+
+
+
 # 4 Efecto del _enventanado_ en la DFT
 
 - Para poner de manifiesto el efecto del enventanado analiza el siguiente código y ejecútalo.
