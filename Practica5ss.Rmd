@@ -392,6 +392,9 @@ plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resol
 plot(t2,abs(yy), col = "green", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
 ```
 
+La RF = 4
+La RC = 4
+Lo que ocurre en este apartado es lo que se conoce como spectral leakage. Ocurrirá si alguna de las com...
 
 - Determina ahora la DFT de esa señal con $N=L$, ¿qué ocurre?
 
@@ -449,17 +452,177 @@ subplot(p1, p2, p3,p4, nrows=2)
 
 - Modifica para que `N1 = 40, N2 = 100`, manteniendo `Nfft = 256`, ¿qué se obtiene ahora? ¿Qué ocurre con todas las componentes "ficticias" asociadas al goteo espectral?
 
+```{r}
+#Además, este código nos sirve para conocer la representación gráfica de la ventana Hamming
+rm(list=ls())
+N1 = 40
+n1 = c(1:N1-1)
+dim(n1)= c(1,N1)
+F = 2*pi*c(2000, 2500, 3000)/10000;
+dim(F)= c(1,3)
+f1 = colSums(cos(t(F) %*% n1));
+length(f1)=N1
+N2 = 100; # Numero de muestras de la senyal
+n2 = n1 = c(0:N2);
+f2 = colSums(cos(t(F) %*%n2));
+length(f2)=N2
+h_f1 = t(f1) * hamming(N1);
+h_f2 =t(f2) * hamming(N2);
+Nfft = 256;
+f10= numeric(Nfft-length(f1))
+f1p= c(f1, f10)
+ftf1 = fft(f1p,Nfft);
+f20= numeric(Nfft-length(f2))
+f2p= c(f2, f20)
+ftf2 = fft(f2p,Nfft);
+h_f10= numeric(Nfft-length(h_f1))
+h_f1p= c(h_f1, h_f10)
+ftf3 = fft(h_f1p,Nfft);
+h_f20= numeric(Nfft-length(h_f2))
+h_f2p= c(h_f2, h_f20)
+ftf4 = fft(h_f2p,Nfft);
+w = c(1:Nfft-1)*(2*pi/Nfft)
+par(mfrow=c(2,2))
+p1 = plot(x=w/pi,y=abs(ftf1))
+p2 = plot(x=w/pi,y=abs(ftf2))
+p3 = plot(x=w/pi,y=abs(ftf3))
+p4 = plot(x=w/pi,y=abs(ftf4))
+
+#subplot(p1, p2, p3,p4, nrows=2)
+#Vemos que lo que ocurre es que se aplanan los picos de las sinusoides. Esto ocurre porque la ventana
+```
+
 
 - Repite el apartado anterior variando el tipo de ventana (`hamming, hanning, blackman`, etc). ¿Qué cambios observas?
 
+```{r}
+library(signal)
+#Ventana Hanning
+rm(list=ls())
+N1 = 40
+n1 = c(1:N1-1)
+dim(n1)= c(1,N1)
+F = 2*pi*c(2000, 2500, 3000)/10000;
+dim(F)= c(1,3)
+f1 = colSums(cos(t(F) %*% n1));
+length(f1)=N1
+N2 = 100; # Numero de muestras de la senyal
+n2 = n1 = c(0:N2);
+f2 = colSums(cos(t(F) %*%n2));
+length(f2)=N2
+h_f1 = t(f1) * hanning(N1);
+h_f2 =t(f2) * hanning(N2);
+Nfft = 256;
+
+f10= numeric(Nfft-length(f1))
+f1p= c(f1, f10)
+ftf1 = fft(f1p,Nfft);
+f20= numeric(Nfft-length(f2))
+f2p= c(f2, f20)
+ftf2 = fft(f2p,Nfft);
+h_f10= numeric(Nfft-length(h_f1))
+h_f1p= c(h_f1, h_f10)
+ftf3 = fft(h_f1p,Nfft);
+h_f20= numeric(Nfft-length(h_f2))
+h_f2p= c(h_f2, h_f20)
+ftf4 = fft(h_f2p,Nfft);
+w = c(1:Nfft-1)*(2*pi/Nfft)
+par(mfrow=c(2,2))
+p1 = plot(x=w/pi,y=abs(ftf1))
+p2 = plot(x=w/pi,y=abs(ftf2))
+p3 = plot(x=w/pi,y=abs(ftf3))
+p4 = plot(x=w/pi,y=abs(ftf4))
+
+
+#subplot(p1, p2, p3,p4, nrows=2)
+#En general, la ventana Hanning es satisfactoria en el 95% de los casos. Tiene buena resolución de frecuencia
+#Ventana Blackman
+rm(list=ls())
+N1 = 40
+n1 = c(1:N1-1)
+dim(n1)= c(1,N1)
+F = 2*pi*c(2000, 2500, 3000)/10000;
+dim(F)= c(1,3)
+f1 = colSums(cos(t(F) %*% n1));
+length(f1)=N1
+N2 = 100; # Numero de muestras de la senyal
+n2 = n1 = c(0:N2);
+f2 = colSums(cos(t(F) %*%n2));
+length(f2)=N2
+h_f1 = t(f1) * blackman(N1);
+h_f2 =t(f2) * blackman(N2);
+Nfft = 256;
+f10= numeric(Nfft-length(f1))
+f1p= c(f1, f10)
+ftf1 = fft(f1p,Nfft);
+f20= numeric(Nfft-length(f2))
+f2p= c(f2, f20)
+ftf2 = fft(f2p,Nfft);
+h_f10= numeric(Nfft-length(h_f1))
+h_f1p= c(h_f1, h_f10)
+ftf3 = fft(h_f1p,Nfft);
+h_f20= numeric(Nfft-length(h_f2))
+h_f2p= c(h_f2, h_f20)
+ftf4 = fft(h_f2p,Nfft);
+w = c(1:Nfft-1)*(2*pi/Nfft)
+par(mfrow=c(2,2))
+p1 = plot(x=w/pi,y=abs(ftf1))
+p2 = plot(x=w/pi,y=abs(ftf2))
+p3 = plot(x=w/pi,y=abs(ftf3))
+p4 = plot(x=w/pi,y=abs(ftf4))
+
+#subplot(p1, p2, p3,p4, nrows=2)
+#La Blackman-Harris es similar a las ventanas Hamming y Hann. El espectro resultante tiene un pico ampli
+```
+
+
+
 - El enventanado reduce el _goteo espectral_ pero ¿no se paga nada a cambio? ¿Qué inconvenientes presenta el enventanado?
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NO SE SI ESTO VA AQUI !!!!!!!!!!!!!!!!!
+
+
+No hay enventanado perfecto. Cada uno perjudica la representación en algún aspecto. De
+hecho, existe una tabla que, dependiendo de la señal a representar, sugiere el mejor enventanado.
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 En este apartado analizaremos algunas _aplicaciones_ de la DFT. El gran uso de la DFT está íntimamente relacionado con la existencia de algoritmos rápidos para su cálculo ($FFT$). La DFT tiene una carga computacional del orden de $N^2$ mientras que la $FFT$ tiene una carga de $N \cdot log_2(N)$.
 
 
 - Representa, en una misma gráfica, la carga computacional en función de _n_ para ambos algoritmos variando _N_ entre 0 y 2048. ¿Es significativa la mejora?
 
+```{r}
+dft <- function(n){n^2}
+fft <- function(n){n*log(n, base = 2)}
+plot(dft, xlim=c(0,2048), ylim=c(0,250000), xlab="N", ylab="Carga computacional", col="black")
+par(new=T, col = "red")
+plot(fft, xlim=c(0,2048), ylim=c(0,250000), xlab="N", ylab="Carga computacional")
+
+#Vemo cómo la función logarítmica tiene un crecimiento mucho más suave, es menos pronunciado. Mientras ........
+```
+
+
 - Una aplicación de la DFT es el cálculo de la convolución de dos secuencias, dada la equivalencia entre la convolución circular y el producto de _DFT's_. Realiza la convolución de las secuencias $X_1 = [1, 2, 3]$ y $X_2 = [-1, 1]$ usando la instrucción `conv`. Realiza el calculo usando la _DFT_ de _N = 3_ puntos. ¿Obtienes los mismos resultados? Repite el procedimiento con _DFT_ de _N = 4_ y _DFT_ de _N = 5_ ¿Coinciden los resultados con los obtenidos con la instrucción `conv`? Explica qué procedimiento debes seguir para usar la DFT para calcular la convolución de dos secuencias y que los resultados coincidan con los de la convolución lineal.
+
+```{r}
+library(signal)
+#Definimos las dos señales
+x1=c(1,2,3,0,0)
+x2=c(-1,1,0,0,0)
+#En primer lugar hacemos la convolución
+y1 <- conv(x1,x2)
+#Y en segundo lugar lo hacemos por partes.
+y2 <- Re(ifft(fft(x1)*fft(x2)))
+
+y1
+
+y2
+```
+
 
 - (Ejercicio Opcional) En ocasiones no necesitamos calcular el espectro de una señal en todas las muestras de la _DFT_ sino que podemos estar interesados en unas pocas frecuencias. En estos casos existen algoritmos mas eficientes que la _FFT_ para realizar este cálculo; es el caso del algoritmo de Goertzel y un ejemplo típico de uso es la detección de tonos DTMF de la línea telefónica. En este apartado debes utilizar el algoritmo de Goertzel para resolver el siguiente problema _Nota: Debes programar el algoritmo de Goertzel, sabiendo que la salida de un filtro digital se puede calcular, con R, con la instrucción `y = filter(B,A,x)`, siendo `B`, y `A` los vectores de coeficientes del numerador y denominador de la función de transferencia del sistema, respectivamente._
 
