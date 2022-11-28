@@ -221,14 +221,17 @@ plot(t2,abs(yy), col = "darkblue", xlab="Frecuencia", ylab="Amplitud", main="Res
 
 ```
 
-No son discernibles todas las componentes sinusoidales de la señal puesto que obtenemos la misma representacion grafica de la resolución computacional y la resolucion fisica. 
+No son discernibles todas las componentes sinusoidales de la señal puesto que obtenemos la misma representacion grafica de la resolución computacional y la resolucion fisica. Y matematicamente obtenemos:
+
+La RF=1000/25 = 40Hz
+La RC=1000/25 = 40Hz
+
+Por tanto, las frecuencias de 100 y 90 como su diferencia es de 10HZ, menor que la RF, no se pueden discernir.
 
 Hemos aprendido que:
 Parar mejorar la resolucion computacional, aumentaremos la N con 0.
 Para mejorar la resolucion fisica, aumentaremos el tiempo de muestreo para que la señal de entrada sea mayor.
 
-La RF=1000/25 = 40Hz
-La RC=1000/25 = 40Hz
 
 - Mantén el número de muestras de la señal y aumenta el orden de la DFT, ¿podemos discernir las
 sinusoides de 90 y 100 Hz?
@@ -259,7 +262,7 @@ yy = fft(xp);
 t2 = (1:N-1) * Fm / N;
 plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional", xlim = c(0,30))
 
-
+plot(t2,abs(yy), col = "darkblue", xlab="Frecuencias", ylab="Amplitud", main="Resolución Computacional")
 
 ```
 CONCLUSIÓN:
