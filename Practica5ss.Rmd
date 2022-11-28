@@ -77,7 +77,7 @@ Haz una señal de 50 Hz y comprueba que tiene un pico en 50 Hz. Fijate en el có
 
 ```{r}
 F1= 50;
-Fm=100;
+Fm=1000;
 tt = 25; # Duracion del muestreo en ms
 N = 25; # Longitud de la DFT aumentada (mediante zero padding)
 t = (Fm * tt) * 1e-3;
@@ -139,44 +139,6 @@ plot(t2,abs(yy), col = "green")
 # Se deja al alumno el anyadir las leyendas
 ```
 
-Se ha considerado una suma de 4 sinusoides de frecuencias $F_1 = 90Hz, F_2 = 100Hz, F_3 = 240Hz, F_4 = 360Hz$ muestreadas con una frecuencia de muestreo de $F_m = 1kHz$.
-
-- Considera que la señal se muestrea durante 25 ms. y que el orden de la DFT coincide con el número de muestras de la señal. ¿Son discernibles todas las componentes sinusoidales de la señal?
-
-- Mantén el número de muestras de la señal y aumenta el orden de la DFT, ¿podemos discernir las
-sinusoides de 90 y 100 Hz?
-
-
-- Ahora aumentaremos el tiempo de muestreo a 100 ms. Elige $N = L$, ¿qué ocurre ahora?
-
-- Repite el apartado anterior aumentando el orden de la DFT, ¿qué ocurre?
-
-
-Una forma alternativa de interpretar qué está ocurriendo cuando $L < N$ es considerar que la señal está siendo enventanada con una ventana rectangular
-
-$wREC(x) = 1$ si $0 \leq n \leq L - 1$
-
-$0n > L$
-
-
-El proceso de enventanado genera una señal $x_w(n) = x(n) \cdot w_R(n)$, siendo $w_R(n)$ la ventana rectangular. El producto en el dominio temporal equivale a la convolución en el dominio frecuencial. La ventana rectangular tiene un espectro con un lóbulo principal de anchura $\frac{2 \pi }{L}$, siendo $L$ la longitud de la ventana. Este lóbulo principal va a tener una gran influencia en el espectro resultante (_nota: La anchura de la ventana se suele definir como la mitad de la anchura del lóbulo principal de la misma_, $\frac{4\pi}{L}$ ).
-
-Hemos visto los problemas que nos encontramos cuando la resolución física no es lo suficientemente pequeña para poder detectar una sinusoide. Sin embargo podemos tener otro problema: ¿qué ocurre cuando esta resolución física es suficiente pero la frecuencia de las componentes no es un múltiplo de la resolución computacional de la DFT $\triangle f | _{COMPUTACIONAL} = \frac{Fm}{N}$?
-
-- Representa gráficamente una sinusoide de frecuencia 10 Hz muestreada a 1000 Hz y duración de 250 ms, fíjate en los puntos iniciales y finales de dicha onda, o bien observa que en este caso la resolución es de _4 Hz_, por lo que en el espectro tendremos componentes en _0 Hz, 4 Hz, 8 Hz, 12 Hz_, $\dots$ pero no en _10 Hz_.
-
-- Determina ahora la DFT de esa señal con $N=L$, ¿qué ocurre?
-
-El efecto que aparece se conoce como _spectral leakage_ (goteo espectral) y es debido a que las componentes sinusoidales no se corresponden con múltiplos de la frecuencia fundamental de la DFT.
-
-
-Otra forma de verlo es trasladarse al dominio temporal. La DFT es la representación de la señal $x(n)$ que por construcción tiene periodo N. Como hay una diferencia entre el punto inicial y final de dicha señal se produce una _discontinuidad_ en esa señal periódica que la DFT intenta modelar. Esta discontinuidad se puede interpretar de nuevo como el producto de la secuencia con una ventana rectangular, y el _goteo espectral_ como consecuencia de los lóbulos secundarios del espectro de la ventana. Para minimizar este problema se plantea el uso de diferentes ventanas.
-
-
-
-
-
-
 
 Dada la secuencia $x(n) = \{ 1, 1, 1, 1, 1 \}$ con $L = 5$. Representar el espectro para DFT's de orden $N=5,10,20,50,100$ y $1000$. Observar las gráficas e indicar cuál es el efecto del _Zero Padding_.
 
@@ -226,6 +188,40 @@ CONCLUSION:
 
 Añadir ceros aumenta el número de puntos de la representación gráfica. 
 Es decir, aumentamos la resolución.
+
+Se ha considerado una suma de 4 sinusoides de frecuencias $F_1 = 90Hz, F_2 = 100Hz, F_3 = 240Hz, F_4 = 360Hz$ muestreadas con una frecuencia de muestreo de $F_m = 1kHz$.
+
+- Considera que la señal se muestrea durante 25 ms. y que el orden de la DFT coincide con el número de muestras de la señal. ¿Son discernibles todas las componentes sinusoidales de la señal?
+
+
+- Mantén el número de muestras de la señal y aumenta el orden de la DFT, ¿podemos discernir las
+sinusoides de 90 y 100 Hz?
+
+
+- Ahora aumentaremos el tiempo de muestreo a 100 ms. Elige $N = L$, ¿qué ocurre ahora?
+
+- Repite el apartado anterior aumentando el orden de la DFT, ¿qué ocurre?
+
+
+Una forma alternativa de interpretar qué está ocurriendo cuando $L < N$ es considerar que la señal está siendo enventanada con una ventana rectangular
+
+$wREC(x) = 1$ si $0 \leq n \leq L - 1$
+
+$0n > L$
+
+
+El proceso de enventanado genera una señal $x_w(n) = x(n) \cdot w_R(n)$, siendo $w_R(n)$ la ventana rectangular. El producto en el dominio temporal equivale a la convolución en el dominio frecuencial. La ventana rectangular tiene un espectro con un lóbulo principal de anchura $\frac{2 \pi }{L}$, siendo $L$ la longitud de la ventana. Este lóbulo principal va a tener una gran influencia en el espectro resultante (_nota: La anchura de la ventana se suele definir como la mitad de la anchura del lóbulo principal de la misma_, $\frac{4\pi}{L}$ ).
+
+Hemos visto los problemas que nos encontramos cuando la resolución física no es lo suficientemente pequeña para poder detectar una sinusoide. Sin embargo podemos tener otro problema: ¿qué ocurre cuando esta resolución física es suficiente pero la frecuencia de las componentes no es un múltiplo de la resolución computacional de la DFT $\triangle f | _{COMPUTACIONAL} = \frac{Fm}{N}$?
+
+- Representa gráficamente una sinusoide de frecuencia 10 Hz muestreada a 1000 Hz y duración de 250 ms, fíjate en los puntos iniciales y finales de dicha onda, o bien observa que en este caso la resolución es de _4 Hz_, por lo que en el espectro tendremos componentes en _0 Hz, 4 Hz, 8 Hz, 12 Hz_, $\dots$ pero no en _10 Hz_.
+
+- Determina ahora la DFT de esa señal con $N=L$, ¿qué ocurre?
+
+El efecto que aparece se conoce como _spectral leakage_ (goteo espectral) y es debido a que las componentes sinusoidales no se corresponden con múltiplos de la frecuencia fundamental de la DFT.
+
+
+Otra forma de verlo es trasladarse al dominio temporal. La DFT es la representación de la señal $x(n)$ que por construcción tiene periodo N. Como hay una diferencia entre el punto inicial y final de dicha señal se produce una _discontinuidad_ en esa señal periódica que la DFT intenta modelar. Esta discontinuidad se puede interpretar de nuevo como el producto de la secuencia con una ventana rectangular, y el _goteo espectral_ como consecuencia de los lóbulos secundarios del espectro de la ventana. Para minimizar este problema se plantea el uso de diferentes ventanas.
 
 
 
