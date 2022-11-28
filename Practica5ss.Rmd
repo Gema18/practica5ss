@@ -186,12 +186,46 @@ plot(abs(y))
 ```
 CONCLUSION:
 
-Añadir ceros aumenta el número de puntos de la representación gráfica. 
-Es decir, aumentamos la resolución.
+Añadir ceros aumenta el número de puntos de la representación gráfica. Es decir, aumentamos la resolución.
 
 Se ha considerado una suma de 4 sinusoides de frecuencias $F_1 = 90Hz, F_2 = 100Hz, F_3 = 240Hz, F_4 = 360Hz$ muestreadas con una frecuencia de muestreo de $F_m = 1kHz$.
 
 - Considera que la señal se muestrea durante 25 ms. y que el orden de la DFT coincide con el número de muestras de la señal. ¿Son discernibles todas las componentes sinusoidales de la señal?
+
+
+```{r}
+F1= 90
+F2= 100
+F3= 240
+F4= 360
+Fm = 1000 #Frecuencia de muestreo
+tt = 25# Duracion del muestreo en ms . Resolucion fisica
+N = 25# Longitud de la DFT aumentada (mediante zero padding)
+t = (Fm* tt)* 1e-3
+x = cos(2*pi*(F1/Fm)*(1:t-1))+ cos(2*pi*(F2/Fm)*(1:t-1))+ cos(2*pi*(F3/Fm)*(1:t-1))+ cos(2*pi*(F4/Fm)*(1:t-1))
+y = fft(x)
+# Generamos el eje X para interpretar frecuencias
+t1 =(1:t-1)* Fm/ t
+plot(t1,abs(y), col = "black", xlab="Frecuencias", ylab="Amplitud", main="Resolución Física")
+
+
+```
+
+```{r}
+x0= numeric(N-length(x))
+xp=c(x, x0)
+yy = fft(xp)
+# Generamos el eje X para interpretar frecuencias
+t2 =(1:N-1)* Fm/ N
+plot(t2,abs(yy), col = "darkblue", xlab="Frecuencia", ylab="Amplitud", main="Resolución Computacional")
+
+```
+
+No son discernibles todas las componentes sinusoidales de la señal puesto que obtenemos la misma representacion grafica de la resolución computacional y la resolucion fisica. 
+
+Hemos aprendido que:
+Parar mejorar la resolucion computacional, aumentaremos la N con 0.
+Para mejorar la resolucion fisica, aumentaremos el tiempo de muestreo para que la señal de entrada sea mayor.
 
 
 - Mantén el número de muestras de la señal y aumenta el orden de la DFT, ¿podemos discernir las
