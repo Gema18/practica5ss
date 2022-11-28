@@ -93,7 +93,7 @@ xp= c(x, x0)
 
 yy = fft(xp);
 t2 = (1:N-1) * Fm / N;
-plot(t2,abs(yy), col = "green") + abline(v = 50, col = "blue")
+plot(t2,abs(yy), col = "green") + abline(v = 50, col = "blue", lwd = 2, lty = 2)
 # Se deja al alumno el anyadir las leyendas
 ```
 
