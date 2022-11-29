@@ -45,7 +45,7 @@ knit_hooks$set(inline=function(x) {
 
 ```{r, include=F}
 # Especificamos las librerías necesarias en esta lista
-packages=c("tidyverse", "knitr", "ggplot2", "datasets", "RColorBrewer", "dplyr", "lubridate", "kableExtra", "ramify", "signal", "tuneR", "sound", "seewave", "signal", "R.matlab", "plotly")
+packages=c("tidyverse", "knitr", "ggplot2", "datasets", "RColorBrewer", "dplyr", "lubridate", "kableExtra", "ramify", "signal", "tuneR", "sound", "seewave", "signal", "R.matlab", "plotly", "pracma")
 # use this function to check if each package is on the local machine
 # if a package is installed, it will be loaded
 # if any are not, the missing package(s) will be installed and loaded
@@ -651,6 +651,7 @@ Podemos observar que la función logarítmica tiene un crecimiento suave, es men
 - Una aplicación de la DFT es el cálculo de la convolución de dos secuencias, dada la equivalencia entre la convolución circular y el producto de _DFT's_. Realiza la convolución de las secuencias $X_1 = [1, 2, 3]$ y $X_2 = [-1, 1]$ usando la instrucción `conv`. Realiza el calculo usando la _DFT_ de _N = 3_ puntos. ¿Obtienes los mismos resultados? Repite el procedimiento con _DFT_ de _N = 4_ y _DFT_ de _N = 5_ ¿Coinciden los resultados con los obtenidos con la instrucción `conv`? Explica qué procedimiento debes seguir para usar la DFT para calcular la convolución de dos secuencias y que los resultados coincidan con los de la convolución lineal.
 
 ```{r}
+rm(list = ls()) # para que no nos salga NaN 
 library(signal)
 #Definimos las dos señales
 x1=c(1,2,3,rep(0,2))
