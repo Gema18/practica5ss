@@ -653,6 +653,27 @@ Podemos observar que la función logarítmica tiene un crecimiento suave, es men
 ```{r}
 rm(list = ls()) # para que no nos salga NaN 
 library(signal)
+# PARA N = 3
+#Definimos las dos señales
+x1=c(1,2,3)
+x2=c(-1,1,0)
+#En primer lugar hacemos la convolución
+y1 <- conv(x1,x2)
+#Y en segundo lugar lo hacemos por partes.
+y2 <- Re(ifft(fft(x1)*fft(x2)))
+y1
+y2
+# PARA N = 4
+#Definimos las dos señales
+x1=c(1,2,3,rep(0,1))
+x2=c(-1,1,rep(0,2))
+#En primer lugar hacemos la convolución
+y1 <- conv(x1,x2)
+#Y en segundo lugar lo hacemos por partes.
+y2 <- Re(ifft(fft(x1)*fft(x2)))
+y1
+y2
+# PARA N = 5
 #Definimos las dos señales
 x1=c(1,2,3,rep(0,2))
 x2=c(-1,1,rep(0,3))
